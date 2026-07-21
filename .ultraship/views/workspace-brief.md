@@ -4,7 +4,7 @@ Run `ultraship views` to regenerate.
 -->
 # UltraShip
 
-**State:** PLANNED
+**State:** DEVELOPING
 **Next command:** `/ultraship:develop`
 
 ## Vision
@@ -13,8 +13,8 @@ An AI-assisted rapid development framework for shipping Minimum Complete Release
 
 ## Products
 
-| Product | Classification | MVP boundary |
-| --- | --- | --- |
-| ultraship | independent-product | One developer takes one product from idea to an immutable release record, entirely in local canonical state. |
+| Product | State | Latest release | Classification | MVP boundary |
+| --- | --- | --- | --- | --- |
+| ultraship | DEVELOPING | 0.2.0 | independent-product | One developer takes one product from idea to an immutable release record, entirely in local canonical state. |
 
-_Canonical sources: workspace.yaml, products/<id>/product.yaml_
+_Canonical sources: workspace.yaml, products/<id>/product.yaml, products/<id>/lifecycle.yaml_

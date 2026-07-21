@@ -1,0 +1,122 @@
+product: ultraship
+version: 0.2.0
+tasks:
+  - id: US-ULTRASHIP-0.2.0-T01
+    summary: >
+      Add a per-product lifecycle.yaml (state, resumes_to, blockers) with its
+      schema, and move state read/write from the workspace onto it in state.mjs
+      and transition.mjs.
+    why_required: >
+      Without per-product state the whole workspace shares one lifecycle, which
+      is the competing truth this release exists to remove.
+    status: done
+    depends_on: []
+    acceptance_criteria:
+      - Each product advances through its own lifecycle independently; one being DEVELOPING does not move another off PLANNED
+      - state reports the active product's lifecycle, active release, and released versions, not a workspace-global state
+    files:
+      - schemas/lifecycle.schema.json
+      - lib/paths.mjs
+      - lib/state.mjs
+      - lib/transition.mjs
+    evidence:
+      - transition operates per product; test/transition.test.mjs — pass
+      - snapshot reads the active product lifecycle; test/state.test.mjs — pass
+  - id: US-ULTRASHIP-0.2.0-T02
+    summary: >
+      Add an `ultraship migrate` command that moves legacy workspace state,
+      resumes_to, and blockers into the active product's lifecycle.yaml and
+      rewrites workspace.yaml without them. Idempotent.
+    why_required: >
+      Existing 0.1.0 workspaces (including this repo) carry state on the
+      workspace; without migration they cannot load under the new engine.
+    status: done
+    depends_on:
+      - US-ULTRASHIP-0.2.0-T01
+    acceptance_criteria:
+      - A single-product workspace behaves exactly as it did in 0.1.0; existing state files load without a migration step, or a migration is provided and tested
+    files:
+      - lib/migrate.mjs
+      - bin/ultraship.mjs
+    evidence:
+      - test/migrate.test.mjs — 4 pass (moves state, idempotent, fresh workspace)
+      - this repo migrated; .ultraship/products/ultraship/lifecycle.yaml written, workspace state stripped
+  - id: US-ULTRASHIP-0.2.0-T03
+    summary: >
+      Add an `ultraship product` command with `add <id> <name>` (scaffold a new
+      product directory and its lifecycle) and `use <id>` (set active_product).
+    why_required: >
+      A second product cannot be registered or selected without a sanctioned way
+      to create its lifecycle and switch the active pointer.
+    status: done
+    depends_on:
+      - US-ULTRASHIP-0.2.0-T01
+    acceptance_criteria:
+      - Registering a second product creates its own product directory and lifecycle state without touching the first product's state
+      - Setting the active product changes which product state, transition, develop, and complete operate on
+    files:
+      - lib/product.mjs
+      - bin/ultraship.mjs
+    evidence:
+      - test/transition.test.mjs 'a named product can be transitioned while another stays put' — pass
+      - test/migrate.test.mjs 'two products at different lifecycle points both validate' — pass
+  - id: US-ULTRASHIP-0.2.0-T04
+    summary: >
+      Report per-product state in snapshot and views; add a workspace view row
+      per product showing its lifecycle state and latest release.
+    why_required: >
+      A developer running several products needs one place that shows where each
+      product stands; state and the workspace brief are that place.
+    status: done
+    depends_on:
+      - US-ULTRASHIP-0.2.0-T01
+    acceptance_criteria:
+      - A workspace view lists every product with its current lifecycle state and latest release
+    files:
+      - lib/state.mjs
+      - lib/views.mjs
+    evidence:
+      - snapshot.products is [{id, state}]; workspace-brief adds State and Latest release columns
+      - test/views.test.mjs — pass
+  - id: US-ULTRASHIP-0.2.0-T05
+    summary: >
+      Update the workspace schema to drop the workspace-global state, resumes_to,
+      and blockers, and confirm validate passes for a two-product workspace at
+      different lifecycle points.
+    why_required: >
+      The schema is the enforcement; while it still requires a workspace state,
+      the old competing-truth model remains legal.
+    status: done
+    depends_on:
+      - US-ULTRASHIP-0.2.0-T01
+      - US-ULTRASHIP-0.2.0-T02
+    acceptance_criteria:
+      - ultraship validate exits 0 for a workspace holding two products at different lifecycle points
+    files:
+      - schemas/workspace.schema.json
+      - lib/validate.mjs
+    evidence:
+      - workspace schema rejects a lifecycle state; test/schemas-workspace.test.mjs — pass
+      - test/migrate.test.mjs 'two products at different lifecycle points both validate' — pass
+  - id: US-ULTRASHIP-0.2.0-T06
+    summary: >
+      Document the multi-product workflow and the new product and migrate
+      commands in the README and NOTICE, and update the brainstorm skill to
+      register products through `ultraship product add`.
+    why_required: >
+      The release adds user-facing commands and a new workflow; undocumented,
+      they are unusable and the public contract is misstated.
+    status: done
+    depends_on:
+      - US-ULTRASHIP-0.2.0-T02
+      - US-ULTRASHIP-0.2.0-T03
+    acceptance_criteria:
+      - The README and NOTICE document the multi-product workflow and any new command
+    files:
+      - README.md
+      - NOTICE
+      - skills/brainstorm/SKILL.md
+    evidence:
+      - README documents product add/use, migrate, and a "Several products in one workspace" section
+      - brainstorm skill registers products through `ultraship product add`; test/install.test.mjs — pass
+      - NOTICE reviewed; its lib/, schemas/, bin/ inventory already covers the new files, no change needed
