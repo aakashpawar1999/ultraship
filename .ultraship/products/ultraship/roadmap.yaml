@@ -30,9 +30,11 @@ versions:
     status: released
   - version: 0.5.0
     outcome: >
-      A release completes as staging- or production-deployed through configurable project hooks,
-      with verified deployment evidence recorded.
-    detail: hypothesis
+      A developer declares their project's deploy or publish command per target mode, and
+      /ultraship:complete runs it, captures its real output, and records verified deployment
+      evidence — so a release reaches staging-deployed, production-deployed, or published with proof
+      from the actual command, and honestly stays release-ready when the command fails.
+    detail: specified
     status: planned
   - version: 1.0.0
     outcome: >
