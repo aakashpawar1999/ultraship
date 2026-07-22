@@ -51,3 +51,13 @@ versions:
       without warning and a major version.
     detail: specified
     status: released
+  - version: 1.1.0
+    outcome: >
+      An outside developer goes from wanting to help to a merged contribution: a CONTRIBUTING guide
+      explains the two-halves architecture, the frozen public contract and the SemVer rule for
+      changing it, and how to run the tests; a code of conduct and security policy set expectations;
+      GitHub pull-request and issue templates guide submissions; CI runs the test suite on every
+      pull request; and the guide shows contributors how to drive their own change through
+      UltraShip's five skills as a Minimum Complete Release.
+    detail: specified
+    status: released
