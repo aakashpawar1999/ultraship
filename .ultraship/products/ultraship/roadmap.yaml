@@ -35,7 +35,7 @@ versions:
       evidence — so a release reaches staging-deployed, production-deployed, or published with proof
       from the actual command, and honestly stays release-ready when the command fails.
     detail: specified
-    status: planned
+    status: released
   - version: 1.0.0
     outcome: >
       A stable, documented, migration-safe framework a developer can rely on for real projects, with

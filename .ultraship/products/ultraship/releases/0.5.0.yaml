@@ -1,6 +1,6 @@
 product: ultraship
 version: 0.5.0
-status: planned
+status: released
 release_type: minor
 outcome:
   user_can: >
@@ -93,3 +93,30 @@ open_questions:
   - Does the hook run from the complete skill (the agent invokes it) or from a new ultraship CLI verb? Leaning the complete skill, to keep the CLI binary free of shelling out. Decided in develop.
   - Is delivery_hooks declared in ultraship.yaml (workspace-wide) or per release contract? Leaning ultraship.yaml, since deploy targets are project-level. Decided in develop.
   - How is the target_mode-to-hook mapping keyed — by mode name directly, or by a named target the contract references? Decided in develop.
+released_at: 2026-07-22T04:00:00Z
+mode: release-ready
+delivered: >
+  A project declares its deploy or publish command per target mode under
+  delivery_hooks, and ultraship deploy runs the command for the release's
+  target_mode, captures its stdout, stderr, and exit code as evidence, runs an
+  optional smoke command on success, and exits non-zero so completion refuses the
+  deployed mode when the command fails. This workspace declares and exercised its
+  own GitHub-release publish hook.
+evidence:
+  tests:
+    - node --test test/deploy.test.mjs — 6 passing, 0 failing (run/capture, failure gate, smoke, smoke-skip-on-fail, no-hooks no-op)
+    - npm test — 215 passing, 0 failing
+  builds:
+    - No build step; pure ESM CLI with a vendored YAML parser and zero runtime dependencies
+  reviews: []
+  deployments:
+    - 'ultraship deploy ultraship 0.5.0 (gh release create v$VERSION --generate-notes --latest) — exit 0; the publish hook ran and created the release during completion, proving the dogfood. The premature release was then deleted so the durable release is published from main after the PR merges, per the strict release-after-merge choice. See evidence/0.5.0/deploy-published.log.'
+  health_checks:
+    - 'ultraship deploy smoke (gh release view v$VERSION --json tagName -q .tagName) — exit 0. See evidence/0.5.0/smoke-published.log.'
+known_limitations:
+  - mode is release-ready, not published. By choice, the durable public GitHub release is (re)created from the main merge commit after the PR merges, via the same delivery_hooks publish hook — not from the unmerged branch. The hook is proven (it ran exit 0 during completion); the marketplace reinstall verified to report 0.5.0 remains the developer's authorized step.
+  - delivery_hooks version substitution uses the shell's own environment expansion ($VERSION); a project on a shell without it would need to inline the version. The vendored path assumes a POSIX shell.
+  - Captured hook output is stored verbatim under evidence/<version>/, so a hook that prints secrets would write them into the repository; hooks must not print secrets.
+supersedes: 0.4.0
+next_recommended_version: 1.0.0
+immutable: true
