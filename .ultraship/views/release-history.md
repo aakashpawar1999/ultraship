@@ -14,6 +14,7 @@ Run `ultraship views` to regenerate.
 | 0.4.0 | 2026-07-22T00:00:00Z | release-ready | ultraship validate mechanically enforces three release-integrity invariants — a released record must be marked released in the roadmap, no shipped version may hold an execution pointer, and every declared version-bearing file must match the release version — so a completion cannot silently ship contradictory state. This workspace declares its own version files and validates clean. |
 | 0.3.0 | 2026-07-21T20:00:00Z | release-ready | A developer records real limits on a release — time, budget, capacity — with `ultraship constraints set`, stored as user estimates and surfaced in state and views; develop and iterate ground release fit in them and recommend the fallback scope when the work no longer fits. Shipping a version now finalizes its state: `transition RELEASED` marks it released in the roadmap and archives the execution pointer, so no shipped release still reads DEVELOPING. `migrate` and `init` keep framework_version honest. |
 | 0.2.0 | 2026-07-21T18:30:00Z | release-ready | A developer registers several independent products in one workspace and runs each on its own lifecycle and release track, selecting the active product, without their states competing. Registration, selection, per-product transitions, migration from 0.1.0, and cross-product views all work. |
+| 0.1.0 | 2026-07-20T00:00:00Z | release-ready | The single-product idea-to-immutable-release loop across the five skills, with local canonical state and an immutability lock. |
 
 ### 1.0.0 known limitations
 
@@ -49,6 +50,11 @@ Run `ultraship views` to regenerate.
 - Not yet published to the zeroonething marketplace; tagging v0.2.0 and the plugin reinstall remain. Achieved mode is release-ready, not the intended published.
 - No coordinated cross-product releases or shared capabilities, by design for a solo developer with independent projects.
 - No provider telemetry; release fit stays qualitative until resource-aware execution in 0.3.0.
+
+### 0.1.0 known limitations
+
+- Reconstructed from the archived planning docs; the original 0.1.0 shipped before release contracts were tracked, so the completion evidence here is not preserved and this file is a historical reference, not the enforced immutable record.
+- Single product only; multi-product workspaces arrive in 0.2.0.
 
 
 _Canonical sources: products/<id>/releases/<version>.yaml_
